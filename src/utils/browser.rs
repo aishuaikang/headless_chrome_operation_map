@@ -54,6 +54,7 @@ impl TencentMap {
     }
 
     fn set_browser_none(&mut self) {
+        self.debug_println("set_browser_none");
         self.browser = None;
     }
 
@@ -73,13 +74,15 @@ impl TencentMap {
                 }
             }
         } else {
+            self.debug_println("get tabs error");
             return Err("get tabs error".into());
         }
 
         let tab = match browser.new_tab() {
-            Ok(tab) => tab,
-            Err(_) => {
+            Ok(tab) => tab.clone(),
+            Err(e) => {
                 self.set_browser_none();
+                self.debug_println(e);
                 self.get_tab()?
             }
         };
@@ -96,6 +99,7 @@ impl TencentMap {
                 self.debug_println(e);
                 "等待腾讯地图加载失败"
             })?;
+
         Ok(tab)
     }
 
