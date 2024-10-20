@@ -7,10 +7,7 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a35f4210-9a82-4b62-aaf4-5c79a5501a52" name="更改" comment="优化调试日志">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/browser.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/browser.rs" afterDir="false" />
-    </list>
+    <list default="true" id="a35f4210-9a82-4b62-aaf4-5c79a5501a52" name="更改" comment="优化调试日志" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -121,7 +118,7 @@
       <workItem from="1729391086702" duration="179000" />
       <workItem from="1729392317247" duration="347000" />
       <workItem from="1729392734017" duration="733000" />
-      <workItem from="1729393796284" duration="402000" />
+      <workItem from="1729393796284" duration="426000" />
     </task>
     <task id="LOCAL-00001" summary="新增免责声明">
       <option name="closed" value="true" />
@@ -171,7 +168,15 @@
       <option name="project" value="LOCAL" />
       <updated>1729393451480</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="优化调试日志">
+      <option name="closed" value="true" />
+      <created>1729394249628</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1729394249628</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
