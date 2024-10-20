@@ -1,7 +1,6 @@
 use crate::utils::launcher::look_path;
 use headless_chrome::{Browser, LaunchOptions, Tab};
 use std::error::Error;
-use std::rc::Rc;
 use std::sync::Arc;
 
 const URL: &str = "https://lbs.qq.com/getPoint/";
@@ -22,7 +21,7 @@ pub enum TencentMapRead {
 }
 
 pub struct TencentMap {
-    browser: Option<Rc<Browser>>,
+    browser: Option<Arc<Browser>>,
 }
 
 impl TencentMap {
@@ -30,7 +29,7 @@ impl TencentMap {
         Ok(Self { browser: None })
     }
 
-    fn get_browser(&mut self) -> BrowserResult<Rc<Browser>> {
+    fn get_browser(&mut self) -> BrowserResult<Arc<Browser>> {
         if let Some(browser) = &self.browser {
             Ok(browser.clone())
         } else {
@@ -43,7 +42,7 @@ impl TencentMap {
                 ..Default::default()
             };
             let browser = Browser::new(launch_options)?;
-            let browser = Rc::new(browser);
+            let browser = Arc::new(browser);
             self.browser = Some(browser.clone());
 
             Ok(browser.clone())
