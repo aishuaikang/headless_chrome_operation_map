@@ -2,6 +2,7 @@ use crate::utils::launcher::look_path;
 use headless_chrome::{Browser, LaunchOptions, Tab};
 use std::error::Error;
 use std::sync::Arc;
+use std::time::Duration;
 
 const URL: &str = "https://lbs.qq.com/getPoint/";
 const SEARCH_INPUT_SELECT: &str = "#app > div > div > div.layout-view > div > div.getpoint-map > div.getpoint-search > div > div > div > div > input";
@@ -42,7 +43,8 @@ impl TencentMap {
                 enable_gpu: true,
                 // enable_logging: true,
                 path: look_path(),
-                port: Some(9222),
+                // port: Some(9222),
+                idle_browser_timeout: Duration::from_secs(86400),
                 ..Default::default()
             };
             let browser = Browser::new(launch_options)?;
@@ -74,20 +76,20 @@ impl TencentMap {
                 }
             }
         } else {
-            self.debug_println("get tabs error");
-            return Err("get tabs error".into());
+            self.debug_println("获取标签列表失败");
+            return Err("获取标签列表失败".into());
         }
 
         let tab = match browser.new_tab() {
-            Ok(tab) => tab.clone(),
+            Ok(tab) => tab,
             Err(e) => {
                 self.set_browser_none();
                 self.debug_println(e);
                 self.get_tab()?
             }
         };
-
-        tab.navigate_to(URL)
+        tab.set_default_timeout(Duration::from_secs(5))
+            .navigate_to(URL)
             .map_err(|e| {
                 self.set_browser_none();
                 self.debug_println(e);
