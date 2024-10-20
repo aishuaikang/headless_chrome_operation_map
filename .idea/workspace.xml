@@ -7,10 +7,10 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a35f4210-9a82-4b62-aaf4-5c79a5501a52" name="更改" comment="修改 headless_chrome 版本信息">
+    <list default="true" id="a35f4210-9a82-4b62-aaf4-5c79a5501a52" name="更改" comment="优化并发安全">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/browser.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/browser.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_tencent_map.rs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_tencent_map.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,7 +119,9 @@
       <workItem from="1729387330395" duration="1680000" />
       <workItem from="1729389143308" duration="253000" />
       <workItem from="1729389407725" duration="210000" />
-      <workItem from="1729391086702" duration="45000" />
+      <workItem from="1729391086702" duration="179000" />
+      <workItem from="1729392317247" duration="347000" />
+      <workItem from="1729392734017" duration="626000" />
     </task>
     <task id="LOCAL-00001" summary="新增免责声明">
       <option name="closed" value="true" />
@@ -145,7 +147,15 @@
       <option name="project" value="LOCAL" />
       <updated>1729389534438</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="优化并发安全">
+      <option name="closed" value="true" />
+      <created>1729391150717</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1729391150717</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -155,6 +165,7 @@
     <MESSAGE value="新增免责声明" />
     <MESSAGE value="设置 repository 信息" />
     <MESSAGE value="修改 headless_chrome 版本信息" />
-    <option name="LAST_COMMIT_MESSAGE" value="修改 headless_chrome 版本信息" />
+    <MESSAGE value="优化并发安全" />
+    <option name="LAST_COMMIT_MESSAGE" value="优化并发安全" />
   </component>
 </project>

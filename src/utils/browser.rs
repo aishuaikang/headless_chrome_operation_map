@@ -22,11 +22,15 @@ pub enum TencentMapRead {
 
 pub struct TencentMap {
     browser: Option<Arc<Browser>>,
+    debug: bool,
 }
 
 impl TencentMap {
-    pub fn new() -> BrowserResult<Self> {
-        Ok(Self { browser: None })
+    pub fn new(debug: bool) -> BrowserResult<Self> {
+        Ok(Self {
+            browser: None,
+            debug,
+        })
     }
 
     fn get_browser(&mut self) -> BrowserResult<Arc<Browser>> {
@@ -53,6 +57,12 @@ impl TencentMap {
         self.browser = None;
     }
 
+    fn debug_println(&self, error: impl std::fmt::Display) {
+        if self.debug {
+            println!("{}", error);
+        }
+    }
+
     fn get_tab(&mut self) -> BrowserResult<Arc<Tab>> {
         let browser = self.get_browser()?;
 
@@ -75,13 +85,15 @@ impl TencentMap {
         };
 
         tab.navigate_to(URL)
-            .map_err(|_| {
+            .map_err(|e| {
                 self.set_browser_none();
+                self.debug_println(e);
                 "打开腾讯地图失败"
             })?
             .wait_until_navigated()
-            .map_err(|_| {
+            .map_err(|e| {
                 self.set_browser_none();
+                self.debug_println(e);
                 "等待腾讯地图加载失败"
             })?;
         Ok(tab)
@@ -94,15 +106,27 @@ impl TencentMap {
             ele.click()?;
         }
         tab.wait_for_element(SEARCH_INPUT_SELECT)
-            .map_err(|_| "搜索框未找到")?
+            .map_err(|e| {
+                self.debug_println(e);
+                "等待搜索框失败"
+            })?
             .click()
-            .map_err(|_| "搜索框点击失败")?;
+            .map_err(|e| {
+                self.debug_println(e);
+                "点击搜索框失败"
+            })?;
 
         // tab.wait_for_element(SEARCH_INPUT_SELECT)?.click()?;
         tab.send_character(query)
-            .map_err(|_| "输入搜索内容失败")?
+            .map_err(|e| {
+                self.debug_println(e);
+                "输入搜索内容失败"
+            })?
             .press_key("Enter")
-            .map_err(|_| "搜索失败")?;
+            .map_err(|e| {
+                self.debug_println(e);
+                "搜索失败"
+            })?;
 
         Ok(())
     }
@@ -114,7 +138,10 @@ impl TencentMap {
             TencentMapRead::Name => {
                 return if let Ok(name) = tab
                     .wait_for_element(NAME_SELECT)
-                    .map_err(|_| "获取名称失败")?
+                    .map_err(|e| {
+                        self.debug_println(e);
+                        "获取名称失败"
+                    })?
                     .get_inner_text()
                 {
                     if name == "点图获取坐标" {
@@ -132,16 +159,22 @@ impl TencentMap {
 
         if let Some(value) = tab
             .wait_for_element(select)
-            .map_err(|_| match read {
-                TencentMapRead::Location => "获取坐标失败",
-                TencentMapRead::Address => "获取地址失败",
-                _ => "获取失败",
+            .map_err(|e| {
+                self.debug_println(e);
+                match read {
+                    TencentMapRead::Location => "获取坐标失败",
+                    TencentMapRead::Address => "获取地址失败",
+                    _ => "获取失败",
+                }
             })?
             .get_attribute_value("value")
-            .map_err(|_| match read {
-                TencentMapRead::Location => "获取坐标失败",
-                TencentMapRead::Address => "获取地址失败",
-                _ => "获取失败",
+            .map_err(|e| {
+                self.debug_println(e);
+                match read {
+                    TencentMapRead::Location => "获取坐标失败",
+                    TencentMapRead::Address => "获取地址失败",
+                    _ => "获取失败",
+                }
             })?
         {
             if value == "-" {
