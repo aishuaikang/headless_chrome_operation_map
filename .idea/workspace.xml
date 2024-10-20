@@ -8,14 +8,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a35f4210-9a82-4b62-aaf4-5c79a5501a52" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/tests/test_tencent_map.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/test_chrome.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/test_chrome.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/browser.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/browser.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/launcher.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/launcher.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +44,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.rust.reset.selective.auto.import": "true",
     "code.cleanup.on.save": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -122,6 +115,7 @@
       <workItem from="1729346818544" duration="1336000" />
       <workItem from="1729386298092" duration="1001000" />
       <workItem from="1729387330395" duration="1680000" />
+      <workItem from="1729389143308" duration="145000" />
     </task>
     <servers />
   </component>
