@@ -5,6 +5,7 @@ edition = "2021"
 authors = ["xiaoai <2506377990@qq.com>"]
 license = "MIT"
 description = "headless chrome operation map"
+repository = "https://github.com/aishuaikang/headless_chrome_operation_map"
 
 
 [dependencies]
