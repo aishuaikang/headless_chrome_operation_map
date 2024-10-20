@@ -9,6 +9,6 @@ repository = "https://github.com/aishuaikang/headless_chrome_operation_map"
 
 
 [dependencies]
-headless_chrome = { git = "https://github.com/rust-headless-chrome/rust-headless-chrome", features = ["fetch"] }
+headless_chrome = { version = "1.0.15", git = "https://github.com/rust-headless-chrome/rust-headless-chrome", features = ["fetch"] }
 [dev-dependencies]
 serial_test = "3.1.1"
