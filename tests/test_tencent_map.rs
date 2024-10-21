@@ -1,9 +1,16 @@
-use headless_chrome_operation_map::utils::browser::{TencentMap, TencentMapRead};
+use std::{thread, time::Duration};
+
+use headless_chrome_operation_map::utils::browser::{
+    TencentMap, TencentMapOptions, TencentMapRead,
+};
 use serial_test::serial;
 #[test]
 #[serial(frpc)]
 fn test_search() -> Result<(), String> {
-    let mut tm = TencentMap::default();
+    let mut tm = TencentMap::new(TencentMapOptions {
+        tab_timeout: Some(Duration::from_secs(60)),
+        ..Default::default()
+    });
 
     tm.search("三里屯".to_string().as_str())
         .map_err(|e| format!("search error: {:?}", e))?;
@@ -14,7 +21,10 @@ fn test_search() -> Result<(), String> {
 #[test]
 #[serial(frpc)]
 fn test_read() -> Result<(), String> {
-    let mut tm = TencentMap::default();
+    let mut tm = TencentMap::new(TencentMapOptions {
+        tab_timeout: Some(Duration::from_secs(60)),
+        ..Default::default()
+    });
 
     let name = tm
         .read(TencentMapRead::Name)
@@ -49,4 +59,33 @@ fn test_read() -> Result<(), String> {
         .map_err(|e| format!("read address error: {:?}", e))?;
     assert_eq!(address, Some("北京市朝阳区".to_string()));
     Ok(())
+}
+
+#[test]
+#[serial(frpc)]
+fn test_set_map_region_by_region_full_name() {
+    let mut tm = TencentMap::new(TencentMapOptions {
+        tab_timeout: Some(Duration::from_secs(60)),
+        devtools: Some(true),
+        ..Default::default()
+    });
+
+    let region_full_name = "贵州省#贵阳市#南明区";
+    tm.set_map_region_by_region_full_name(region_full_name)
+        .unwrap();
+
+    let region_name = tm.get_map_region().unwrap();
+    assert_eq!(region_name, "贵阳市");
+}
+
+#[test]
+#[serial(frpc)]
+fn test_get_map_region() {
+    let mut tm = TencentMap::new(TencentMapOptions {
+        tab_timeout: Some(Duration::from_secs(60)),
+        ..Default::default()
+    });
+
+    let region_name = tm.get_map_region().unwrap();
+    assert_eq!(region_name, "北京市");
 }
