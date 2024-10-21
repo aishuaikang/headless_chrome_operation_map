@@ -23,14 +23,13 @@ pub enum TencentMapRead {
 
 pub struct TencentMap {
     browser: Option<Arc<Browser>>,
-    debug: bool,
 }
 
 impl TencentMap {
-    pub fn new(debug: bool) -> BrowserResult<Self> {
+    pub fn new() -> BrowserResult<Self> {
         Ok(Self {
             browser: None,
-            debug,
+            // debug,
         })
     }
 
@@ -56,15 +55,15 @@ impl TencentMap {
     }
 
     fn set_browser_none(&mut self) {
-        self.debug_println("set_browser_none");
+        // self.debug_println("set_browser_none");
         self.browser = None;
     }
 
-    fn debug_println(&self, error: impl std::fmt::Display) {
-        if self.debug {
-            println!("{}", error);
-        }
-    }
+    // fn debug_println(&self, error: impl std::fmt::Display) {
+    //     if self.debug {
+    //         println!("{}", error);
+    //     }
+    // }
 
     fn get_tab(&mut self) -> BrowserResult<Arc<Tab>> {
         let browser = self.get_browser()?;
@@ -76,29 +75,29 @@ impl TencentMap {
                 }
             }
         } else {
-            self.debug_println("获取标签列表失败");
+            // self.debug_println("获取标签列表失败");
             return Err("获取标签列表失败".into());
         }
 
         let tab = match browser.new_tab() {
             Ok(tab) => tab,
-            Err(e) => {
+            Err(_) => {
                 self.set_browser_none();
-                self.debug_println(e);
+                // self.debug_println(e);
                 self.get_tab()?
             }
         };
-        tab.set_default_timeout(Duration::from_secs(5))
+        tab.set_default_timeout(Duration::from_secs(20))
             .navigate_to(URL)
-            .map_err(|e| {
+            .map_err(|_| {
                 self.set_browser_none();
-                self.debug_println(e);
+                // self.debug_println(e);
                 "打开腾讯地图失败"
             })?
             .wait_until_navigated()
-            .map_err(|e| {
+            .map_err(|_| {
                 self.set_browser_none();
-                self.debug_println(e);
+                // self.debug_println(e);
                 "等待腾讯地图加载失败"
             })?;
 
@@ -112,25 +111,25 @@ impl TencentMap {
             ele.click()?;
         }
         tab.wait_for_element(SEARCH_INPUT_SELECT)
-            .map_err(|e| {
-                self.debug_println(e);
+            .map_err(|_| {
+                // self.debug_println(e);
                 "等待搜索框失败"
             })?
             .click()
-            .map_err(|e| {
-                self.debug_println(e);
+            .map_err(|_| {
+                // self.debug_println(e);
                 "点击搜索框失败"
             })?;
 
         // tab.wait_for_element(SEARCH_INPUT_SELECT)?.click()?;
         tab.send_character(query)
-            .map_err(|e| {
-                self.debug_println(e);
+            .map_err(|_| {
+                // self.debug_println(e);
                 "输入搜索内容失败"
             })?
             .press_key("Enter")
-            .map_err(|e| {
-                self.debug_println(e);
+            .map_err(|_| {
+                // self.debug_println(e);
                 "搜索失败"
             })?;
 
@@ -144,8 +143,8 @@ impl TencentMap {
             TencentMapRead::Name => {
                 return if let Ok(name) = tab
                     .wait_for_element(NAME_SELECT)
-                    .map_err(|e| {
-                        self.debug_println(e);
+                    .map_err(|_| {
+                        // self.debug_println(e);
                         "获取名称失败"
                     })?
                     .get_inner_text()
@@ -157,7 +156,7 @@ impl TencentMap {
                     }
                 } else {
                     Ok(None)
-                }
+                };
             }
             TencentMapRead::Location => LOCATION_SELECT,
             TencentMapRead::Address => ADDRESS_SELECT,
@@ -165,8 +164,8 @@ impl TencentMap {
 
         if let Some(value) = tab
             .wait_for_element(select)
-            .map_err(|e| {
-                self.debug_println(e);
+            .map_err(|_| {
+                // self.debug_println(e);
                 match read {
                     TencentMapRead::Location => "获取坐标失败",
                     TencentMapRead::Address => "获取地址失败",
@@ -174,8 +173,8 @@ impl TencentMap {
                 }
             })?
             .get_attribute_value("value")
-            .map_err(|e| {
-                self.debug_println(e);
+            .map_err(|_| {
+                // self.debug_println(e);
                 match read {
                     TencentMapRead::Location => "获取坐标失败",
                     TencentMapRead::Address => "获取地址失败",

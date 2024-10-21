@@ -11,7 +11,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/browser.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/browser.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_tencent_map.rs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_tencent_map.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -125,6 +124,8 @@
       <workItem from="1729392734017" duration="733000" />
       <workItem from="1729393796284" duration="863000" />
       <workItem from="1729397415696" duration="488000" />
+      <workItem from="1729473962863" duration="5000" />
+      <workItem from="1729473973543" duration="281000" />
     </task>
     <task id="LOCAL-00001" summary="新增免责声明">
       <option name="closed" value="true" />

@@ -3,7 +3,7 @@ use serial_test::serial;
 #[test]
 #[serial(frpc)]
 fn test_search() -> Result<(), String> {
-    let mut tm = TencentMap::new(true).map_err(|e| format!("new error: {:?}", e))?;
+    let mut tm = TencentMap::new().map_err(|e| format!("new error: {:?}", e))?;
 
     tm.search("三里屯".to_string().as_str())
         .map_err(|e| format!("search error: {:?}", e))?;
@@ -14,7 +14,7 @@ fn test_search() -> Result<(), String> {
 #[test]
 #[serial(frpc)]
 fn test_read() -> Result<(), String> {
-    let mut tm = TencentMap::new(true).map_err(|e| format!("new error: {:?}", e))?;
+    let mut tm = TencentMap::new().map_err(|e| format!("new error: {:?}", e))?;
 
     let name = tm
         .read(TencentMapRead::Name)
@@ -50,5 +50,3 @@ fn test_read() -> Result<(), String> {
     assert_eq!(address, Some("北京市朝阳区".to_string()));
     Ok(())
 }
-
-
