@@ -21,16 +21,36 @@ pub enum TencentMapRead {
     Address,
 }
 
+pub struct TencentMapOptions {
+    pub tab_timeout: Option<Duration>,
+}
+
+impl Default for TencentMapOptions {
+    fn default() -> Self {
+        Self { tab_timeout: None }
+    }
+}
+
 pub struct TencentMap {
     browser: Option<Arc<Browser>>,
+    options: TencentMapOptions,
+}
+
+impl Default for TencentMap {
+    fn default() -> Self {
+        Self {
+            browser: None,
+            options: Default::default(),
+        }
+    }
 }
 
 impl TencentMap {
-    pub fn new() -> BrowserResult<Self> {
-        Ok(Self {
+    pub fn new(options: TencentMapOptions) -> Self {
+        Self {
             browser: None,
-            // debug,
-        })
+            options,
+        }
     }
 
     fn get_browser(&mut self) -> BrowserResult<Arc<Browser>> {
@@ -87,7 +107,7 @@ impl TencentMap {
                 self.get_tab()?
             }
         };
-        tab.set_default_timeout(Duration::from_secs(20))
+        tab.set_default_timeout(self.options.tab_timeout.unwrap_or(Duration::from_secs(10)))
             .navigate_to(URL)
             .map_err(|_| {
                 self.set_browser_none();
