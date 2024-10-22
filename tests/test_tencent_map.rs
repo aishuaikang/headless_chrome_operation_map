@@ -89,3 +89,21 @@ fn test_get_map_region() {
     let region_name = tm.get_map_region().unwrap();
     assert_eq!(region_name, "北京市");
 }
+
+#[test]
+#[serial(frpc)]
+fn test_exit() {
+    let mut tm = TencentMap::new(TencentMapOptions {
+        tab_timeout: Some(Duration::from_secs(60)),
+        ..Default::default()
+    });
+    tm.get_map_region().unwrap();
+
+    // 开始计时
+    println!("10s后退出");
+    thread::sleep(Duration::from_secs(10));
+    tm.exit().unwrap();
+    println!("exit");
+    thread::sleep(Duration::from_secs(10));
+    println!("exit end");
+}

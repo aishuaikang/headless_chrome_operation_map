@@ -270,4 +270,48 @@ impl TencentMap {
             .trim()
             .to_string())
     }
+
+    pub fn exit(&mut self) -> BrowserResult<()> {
+        if let Some(browser) = self.browser.take() {
+            browser
+                .get_process_id()
+                .map(|pid| unsafe { Self::kill_process(pid as u32) });
+        }
+
+        Ok(())
+    }
+
+    #[cfg(target_os = "windows")]
+    fn kill_process(pid: u32) -> Result<(), Box<dyn Error>> {
+        use winapi::um::handleapi::CloseHandle;
+        use winapi::um::processthreadsapi::OpenProcess;
+        use winapi::um::processthreadsapi::TerminateProcess;
+        use winapi::um::winnt::{PROCESS_QUERY_INFORMATION, PROCESS_TERMINATE};
+
+        unsafe {
+            let process_handle = OpenProcess(PROCESS_TERMINATE | PROCESS_QUERY_INFORMATION, 0, pid);
+            if process_handle.is_null() {
+                return Err("Failed to open process handle".into());
+            }
+
+            if TerminateProcess(process_handle, 0) == 0 {
+                CloseHandle(process_handle);
+                return Err("Failed to terminate process".into());
+            }
+
+            CloseHandle(process_handle);
+        }
+
+        Ok(())
+    }
+
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    fn kill_process(pid: u32) -> Result<(), Box<dyn Error>> {
+        use nix::libc::kill;
+
+        let pid: i32 = pid.try_into().map_err(|_| "Failed to convert PID to i32")?;
+        unsafe { kill(pid, 9) };
+
+        Ok(())
+    }
 }
