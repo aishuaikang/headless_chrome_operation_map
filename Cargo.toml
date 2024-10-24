@@ -5,7 +5,7 @@ edition = "2021"
 license = "MIT"
 name = "headless_chrome_operation_map"
 repository = "https://github.com/aishuaikang/headless_chrome_operation_map"
-version = "0.1.7"
+version = "0.1.8"
 
 [dependencies]
 headless_chrome = { version = "1.0.15", git = "https://github.com/rust-headless-chrome/rust-headless-chrome", features = [
