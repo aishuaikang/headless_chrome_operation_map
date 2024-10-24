@@ -314,4 +314,10 @@ impl TencentMap {
 
         Ok(())
     }
+
+    pub fn call_js(&mut self, js: &str) -> BrowserResult<()> {
+        let tab = self.get_tab()?;
+        tab.evaluate(js, false)?;
+        Ok(())
+    }
 }
