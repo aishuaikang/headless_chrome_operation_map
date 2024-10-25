@@ -17,7 +17,8 @@ serde_json = "1.0"
 winapi = { version = "0.3.9", features = [
     "winuser",
     "processthreadsapi",
-    "handleapi;",
+    "handleapi",
+    "winnt",
 ] }
 [dev-dependencies]
 serial_test = "3.1.1"
