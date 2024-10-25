@@ -283,25 +283,28 @@ impl TencentMap {
 
     #[cfg(target_os = "windows")]
     fn kill_process(pid: u32) -> Result<(), Box<dyn Error>> {
+        // windows 中如何 kill 进程
+        use std::process::Command;
+        use std::ptr::null_mut;
         use winapi::um::handleapi::CloseHandle;
         use winapi::um::processthreadsapi::OpenProcess;
         use winapi::um::processthreadsapi::TerminateProcess;
-        use winapi::um::winnt::{PROCESS_QUERY_INFORMATION, PROCESS_TERMINATE};
+        use winapi::um::winnt::{HANDLE, PROCESS_TERMINATE};
 
         unsafe {
-            let process_handle = OpenProcess(PROCESS_TERMINATE | PROCESS_QUERY_INFORMATION, 0, pid);
-            if process_handle.is_null() {
-                return Err("Failed to open process handle".into());
+            let handle: HANDLE = OpenProcess(PROCESS_TERMINATE, 0, pid);
+            if handle == null_mut() {
+                return Err("Failed to open process".into());
             }
 
-            if TerminateProcess(process_handle, 0) == 0 {
-                CloseHandle(process_handle);
+            if TerminateProcess(handle, 0) == 0 {
                 return Err("Failed to terminate process".into());
             }
 
-            CloseHandle(process_handle);
+            if CloseHandle(handle) == 0 {
+                return Err("Failed to close handle".into());
+            }
         }
-
         Ok(())
     }
 

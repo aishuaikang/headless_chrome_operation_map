@@ -5,7 +5,7 @@ edition = "2021"
 license = "MIT"
 name = "headless_chrome_operation_map"
 repository = "https://github.com/aishuaikang/headless_chrome_operation_map"
-version = "0.1.8"
+version = "0.1.9"
 
 [dependencies]
 headless_chrome = { version = "1.0.15", git = "https://github.com/rust-headless-chrome/rust-headless-chrome", features = [
@@ -14,5 +14,6 @@ headless_chrome = { version = "1.0.15", git = "https://github.com/rust-headless-
 nix = "0.29.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+winapi = { version = "0.3.9", features = ["winuser", "processthreadsapi"] }
 [dev-dependencies]
 serial_test = "3.1.1"
