@@ -1,5 +1,3 @@
-use std::error::Error;
-
 use serde::Deserialize;
 
 const REGIONS_JSON: &str = include_str!("../../data/regions.json");
@@ -19,7 +17,7 @@ pub struct Location {
 }
 
 impl Region {
-    pub fn get_regions() -> Result<Vec<Region>, Box<dyn Error>> {
+    pub fn get_regions() -> anyhow::Result<Vec<Region>> {
         Ok(serde_json::from_str(REGIONS_JSON)?)
     }
 

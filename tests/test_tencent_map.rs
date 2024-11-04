@@ -6,57 +6,43 @@ use headless_chrome_operation_map::utils::browser::{
 use serial_test::serial;
 #[test]
 #[serial(frpc)]
-fn test_search() -> Result<(), String> {
+fn test_search() -> anyhow::Result<()> {
     let mut tm = TencentMap::new(TencentMapOptions {
         tab_timeout: Some(Duration::from_secs(60)),
         ..Default::default()
     });
 
-    tm.search("三里屯".to_string().as_str())
-        .map_err(|e| format!("search error: {:?}", e))?;
+    tm.search("三里屯".to_string().as_str())?;
 
     Ok(())
 }
 
 #[test]
 #[serial(frpc)]
-fn test_read() -> Result<(), String> {
+fn test_read() -> anyhow::Result<()> {
     let mut tm = TencentMap::new(TencentMapOptions {
         tab_timeout: Some(Duration::from_secs(60)),
         ..Default::default()
     });
 
-    let name = tm
-        .read(TencentMapRead::Name)
-        .map_err(|e| format!("read name error: {:?}", e))?;
+    let name = tm.read(TencentMapRead::Name)?;
     assert_eq!(name, None);
 
-    let location = tm
-        .read(TencentMapRead::Location)
-        .map_err(|e| format!("read location error: {:?}", e))?;
+    let location = tm.read(TencentMapRead::Location)?;
     assert_eq!(location, None);
 
-    let address = tm
-        .read(TencentMapRead::Address)
-        .map_err(|e| format!("read address error: {:?}", e))?;
+    let address = tm.read(TencentMapRead::Address)?;
     assert_eq!(address, None);
 
-    tm.search("三里屯".to_string().as_str())
-        .map_err(|e| format!("search error: {:?}", e))?;
+    tm.search("三里屯".to_string().as_str())?;
 
-    let name = tm
-        .read(TencentMapRead::Name)
-        .map_err(|e| format!("read name error: {:?}", e))?;
+    let name = tm.read(TencentMapRead::Name)?;
     assert_eq!(name, Some("三里屯".to_string()));
 
-    let location = tm
-        .read(TencentMapRead::Location)
-        .map_err(|e| format!("read location error: {:?}", e))?;
+    let location = tm.read(TencentMapRead::Location)?;
     assert_eq!(location, Some("39.937657,116.453508".to_string()));
 
-    let address = tm
-        .read(TencentMapRead::Address)
-        .map_err(|e| format!("read address error: {:?}", e))?;
+    let address = tm.read(TencentMapRead::Address)?;
     assert_eq!(address, Some("北京市朝阳区".to_string()));
     Ok(())
 }

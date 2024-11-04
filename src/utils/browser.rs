@@ -1,10 +1,41 @@
 use crate::utils::launcher::look_path;
 use headless_chrome::{Browser, LaunchOptions, Tab};
-use std::error::Error;
 use std::sync::Arc;
 use std::time::Duration;
 
 use super::regions::Region;
+
+#[derive(thiserror::Error, Debug)]
+pub enum BrowserError {
+    #[error("获取标签失败")]
+    GetTab,
+    #[error("打开腾讯地图失败: {0}")]
+    OpenMap(anyhow::Error),
+    #[error("等待腾讯地图加载失败: {0}")]
+    WaitMapLoad(anyhow::Error),
+    #[error("等待搜索框失败: {0}")]
+    WaitSearchBar(anyhow::Error),
+    #[error("点击搜索框失败: {0}")]
+    ClickSearchBar(anyhow::Error),
+    #[error("输入搜索内容失败: {0}")]
+    InputSearchContent(anyhow::Error),
+    #[error("搜索失败: {0}")]
+    Search(anyhow::Error),
+    #[error("获取名称失败: {0}")]
+    GetName(anyhow::Error),
+    #[error("获取坐标失败")]
+    GetLocation,
+    #[error("获取地址失败")]
+    GetAddress,
+    #[error("获取失败")]
+    Get,
+    #[error("获取地区失败")]
+    GetArea,
+    #[error("等待当前地图区域失败: {0}")]
+    WaitCurrentMapArea(anyhow::Error),
+    #[error("获取当前地图区域失败: {0}")]
+    GetCurrentMapArea(anyhow::Error),
+}
 
 const URL: &str = "https://lbs.qq.com/getPoint/";
 // 搜索框
@@ -25,8 +56,6 @@ const TERMINAL_NAME_SELECT: &str =
 const TERMINAL_LOCATION_SELECT: &str = "#location > div > input";
 // 终端地址
 const TERMINAL_ADDRESS_SELECT: &str = "#address > div > input";
-
-type BrowserResult<T> = Result<T, Box<dyn Error>>;
 
 pub enum TencentMapRead {
     Name,
@@ -70,7 +99,7 @@ impl TencentMap {
         }
     }
 
-    fn get_browser(&mut self) -> BrowserResult<Arc<Browser>> {
+    fn get_browser(&mut self) -> anyhow::Result<Arc<Browser>> {
         if let Some(browser) = &self.browser {
             Ok(browser.clone())
         } else {
@@ -103,7 +132,7 @@ impl TencentMap {
     //     }
     // }
 
-    fn get_tab(&mut self) -> BrowserResult<Arc<Tab>> {
+    fn get_tab(&mut self) -> anyhow::Result<Arc<Tab>> {
         let browser = self.get_browser()?;
 
         if let Ok(tabs) = browser.get_tabs().lock() {
@@ -113,8 +142,7 @@ impl TencentMap {
                 }
             }
         } else {
-            // self.debug_println("获取标签列表失败");
-            return Err("获取标签列表失败".into());
+            return Err(BrowserError::GetTab.into());
         }
 
         let tab = match browser.new_tab() {
@@ -126,47 +154,48 @@ impl TencentMap {
         };
         tab.set_default_timeout(self.options.tab_timeout.unwrap_or(Duration::from_secs(60)))
             .navigate_to(URL)
-            .map_err(|_| {
+            .map_err(|e| {
                 self.set_browser_none();
-                "打开腾讯地图失败"
+                // "打开腾讯地图失败"
+                BrowserError::OpenMap(e)
             })?
             .wait_until_navigated()
-            .map_err(|_| {
+            .map_err(|e| {
                 self.set_browser_none();
-                "等待腾讯地图加载失败"
+                BrowserError::WaitMapLoad(e)
             })?;
 
         Ok(tab)
     }
 
-    pub fn search(&mut self, query: &str) -> BrowserResult<()> {
+    pub fn search(&mut self, query: &str) -> anyhow::Result<()> {
         let tab = self.get_tab()?;
 
         if let Ok(ele) = tab.find_element(MAP_SEARCH_BAR_CLEAR_BUTTON_SELECT) {
             ele.click()?;
         }
         tab.wait_for_element(MAP_SEARCH_BAR_SELECT)
-            .map_err(|_| "等待搜索框失败")?
+            .map_err(BrowserError::WaitSearchBar)?
             .click()
-            .map_err(|_| "点击搜索框失败")?;
+            .map_err(BrowserError::ClickSearchBar)?;
 
         // tab.wait_for_element(SEARCH_INPUT_SELECT)?.click()?;
         tab.send_character(query)
-            .map_err(|_| "输入搜索内容失败")?
+            .map_err(BrowserError::InputSearchContent)?
             .press_key("Enter")
-            .map_err(|_| "搜索失败")?;
+            .map_err(BrowserError::Search)?;
 
         Ok(())
     }
 
-    pub fn read(&mut self, read: TencentMapRead) -> BrowserResult<Option<String>> {
+    pub fn read(&mut self, read: TencentMapRead) -> anyhow::Result<Option<String>> {
         let tab = self.get_tab()?;
 
         let select = match read {
             TencentMapRead::Name => {
                 return if let Ok(name) = tab
                     .wait_for_element(TERMINAL_NAME_SELECT)
-                    .map_err(|_| "获取名称失败")?
+                    .map_err(BrowserError::GetName)?
                     .get_inner_text()
                 {
                     if name == "点图获取坐标" {
@@ -185,15 +214,15 @@ impl TencentMap {
         if let Some(value) = tab
             .wait_for_element(select)
             .map_err(|_| match read {
-                TencentMapRead::Location => "获取坐标失败",
-                TencentMapRead::Address => "获取地址失败",
-                _ => "获取失败",
+                TencentMapRead::Location => BrowserError::GetLocation,
+                TencentMapRead::Address => BrowserError::GetAddress,
+                _ => BrowserError::Get,
             })?
             .get_attribute_value("value")
             .map_err(|_| match read {
-                TencentMapRead::Location => "获取坐标失败",
-                TencentMapRead::Address => "获取地址失败",
-                _ => "获取失败",
+                TencentMapRead::Location => BrowserError::GetLocation,
+                TencentMapRead::Address => BrowserError::GetAddress,
+                _ => BrowserError::Get,
             })?
         {
             if value == "-" {
@@ -209,9 +238,9 @@ impl TencentMap {
     pub fn set_map_region_by_region_full_name(
         &mut self,
         region_full_name: &str,
-    ) -> BrowserResult<()> {
-        let region =
-            Region::get_map_region_by_region_full_name(region_full_name).ok_or("获取地区失败")?;
+    ) -> anyhow::Result<()> {
+        let region = Region::get_map_region_by_region_full_name(region_full_name)
+            .ok_or(BrowserError::GetArea)?;
 
         let tab = self.get_tab()?;
 
@@ -259,19 +288,20 @@ impl TencentMap {
         Ok(())
     }
 
-    pub fn get_map_region(&mut self) -> BrowserResult<String> {
+    pub fn get_map_region(&mut self) -> anyhow::Result<String> {
         let tab = self.get_tab()?;
 
         Ok(tab
             .wait_for_element(MAP_AREA_SELECT)
-            .map_err(|_| "等待当前地图区域失败")?
+            .map_err(BrowserError::WaitCurrentMapArea)?
             .get_inner_text()
-            .map_err(|_| "获取当前地图区域失败")?
+            .map_err(BrowserError::GetCurrentMapArea)?
             .trim()
             .to_string())
     }
 
-    pub fn exit(&mut self) -> BrowserResult<()> {
+    #[allow(unused_unsafe)]
+    pub fn exit(&mut self) -> anyhow::Result<()> {
         if let Some(browser) = self.browser.take() {
             browser
                 .get_process_id()
@@ -282,7 +312,7 @@ impl TencentMap {
     }
 
     #[cfg(target_os = "windows")]
-    fn kill_process(pid: u32) -> Result<(), Box<dyn Error>> {
+    fn kill_process(pid: u32) -> anyhow::Result<()> {
         // windows 中如何 kill 进程
         use std::process::Command;
         use std::ptr::null_mut;
@@ -309,16 +339,14 @@ impl TencentMap {
     }
 
     #[cfg(any(target_os = "linux", target_os = "macos"))]
-    fn kill_process(pid: u32) -> Result<(), Box<dyn Error>> {
+    fn kill_process(pid: u32) -> anyhow::Result<()> {
         use nix::libc::kill;
-
-        let pid: i32 = pid.try_into().map_err(|_| "Failed to convert PID to i32")?;
-        unsafe { kill(pid, 9) };
+        unsafe { kill(pid as i32, 9) };
 
         Ok(())
     }
 
-    pub fn call_js(&mut self, js: &str) -> BrowserResult<()> {
+    pub fn call_js(&mut self, js: &str) -> anyhow::Result<()> {
         let tab = self.get_tab()?;
         tab.evaluate(js, false)?;
         Ok(())
