@@ -1,6 +1,6 @@
 [package]
 name = "headless_chrome_operation_map"
-version = "0.2.2"
+version = "0.2.3"
 authors = ["xiaoai <2506377990@qq.com>"]
 edition = "2021"
 description = "headless chrome operation map"
