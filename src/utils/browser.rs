@@ -35,6 +35,12 @@ pub enum BrowserError {
     WaitCurrentMapArea(anyhow::Error),
     #[error("获取当前地图区域失败: {0}")]
     GetCurrentMapArea(anyhow::Error),
+    #[error("无法打开进程")]
+    OpenProcess,
+    #[error("进程终止失败")]
+    TerminateProcess,
+    #[error("无法关闭句柄")]
+    CloseHandle,
 }
 
 const URL: &str = "https://lbs.qq.com/getPoint/";
@@ -332,15 +338,17 @@ impl TencentMap {
         unsafe {
             let handle: HANDLE = OpenProcess(PROCESS_TERMINATE, 0, pid);
             if handle == null_mut() {
-                return Err("Failed to open process".into());
+                return Err(BrowserError::OpenProcess);
             }
 
             if TerminateProcess(handle, 0) == 0 {
-                return Err("Failed to terminate process".into());
+                // return Err("Failed to terminate process".into());
+                return Err(BrowserError::TerminateProcess);
             }
 
             if CloseHandle(handle) == 0 {
-                return Err("Failed to close handle".into());
+                // return Err("Failed to close handle".into());
+                return Err(BrowserError::CloseHandle);
             }
         }
         Ok(())
