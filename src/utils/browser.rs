@@ -184,6 +184,14 @@ impl TencentMap {
             .map_err(BrowserError::InputSearchContent)?
             .press_key("Enter")
             .map_err(BrowserError::Search)?;
+        // body > div:nth-child(10)
+        tab.wait_for_element(MAP_AREA_SELECT)?.call_js_fn(
+            "function hideSearchDropdown(){
+                document.querySelector('body > div:nth-child(10)').remove();
+            }",
+            vec![],
+            false,
+        )?;
 
         Ok(())
     }
